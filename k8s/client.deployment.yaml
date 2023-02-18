@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: mterrano1/case-tracker-client:1.1.4
+          ports:
+            - containerPort: 4000
+          env:
+            - name: WDS_SOCKET_PORT
+              value: "0"
+      imagePullSecrets:
+        - name: regcred

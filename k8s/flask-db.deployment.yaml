@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-db-deployment
+spec:
+  selector:
+    matchLabels:
+      app: flask-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flask-db
+    spec:
+      containers:
+        - name: flask-db
+          image: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flask-db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flask-db-secret
+                  key: password
+            - name: POSTGRES_DB
+              value: flask-db
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: flask-db-persistent-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: flask-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: flask-db-pvc
