@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rails-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rails
+  template:
+    metadata:
+      labels:
+        app: rails
+    spec:
+      containers:
+        - name: rails
+          image: mterrano1/case-tracker-rails:1.1.0
+          ports:
+            - containerPort: 3000
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rails-db-secret
+                  key: password
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rails-db-secret
+                  key: username
+            - name: POSTGRES_DB
+              value: rails-db
+            - name: RAILS_ENV
+              value: production
+            - name: POSTGRES_HOST
+              value: rails-db-service
+            - name: POSTGRES_PORT
+              value: "5432"
+      imagePullSecrets:
+        - name: regcred

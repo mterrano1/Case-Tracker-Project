@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rails-db-deployment
+spec:
+  selector:
+    matchLabels:
+      app: rails-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rails-db
+    spec:
+      containers:
+        - name: rails-db
+          image: postgres
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rails-db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rails-db-secret
+                  key: password
+            - name: POSTGRES_DB
+              value: rails-db
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: rails-db-persistent-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+      volumes:
+        - name: rails-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: rails-db-pvc
