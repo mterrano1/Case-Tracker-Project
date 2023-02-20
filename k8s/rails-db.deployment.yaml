@@ -33,6 +33,7 @@ spec:
           volumeMounts:
             - name: rails-db-persistent-storage
               mountPath: /var/lib/postgresql/data
+              subPath: postgres
       volumes:
         - name: rails-db-persistent-storage
           persistentVolumeClaim:

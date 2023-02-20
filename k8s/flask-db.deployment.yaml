@@ -33,6 +33,7 @@ spec:
           volumeMounts:
             - name: flask-db-persistent-storage
               mountPath: /var/lib/postgresql/data
+              subPath: postgres
       volumes:
         - name: flask-db-persistent-storage
           persistentVolumeClaim:
