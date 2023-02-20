@@ -7,14 +7,16 @@ spec:
   selector:
     matchLabels:
       app: client
+      version: v1.0.6
   template:
     metadata:
       labels:
         app: client
+        version: v1.0.6
     spec:
       containers:
         - name: client
-          image: mterrano1/case-tracker-deploy-example:1.0.1
+          image: mterrano1/case-tracker-deploy-example:1.0.6
           ports:
             - containerPort: 4000
           env:
