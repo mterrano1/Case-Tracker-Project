@@ -2,12 +2,15 @@ provider "aws" {
   region = var.region
 }
 
+// Get the availability zones for the region
 data "aws_availability_zones" "available" {}
 
+// Define the name of the EKS cluster
 locals {
   cluster_name = "case-tracker-eks"
 }
 
+// Create the VPC for the EKS cluster using the terraform-aws-modules/vpc module
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.19.0"
@@ -15,6 +18,7 @@ module "vpc" {
   name = "case-tracker-vpc"
 
   cidr = "10.0.0.0/16"
+  // Availability zones to use for the subnets
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
 
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -35,6 +39,7 @@ module "vpc" {
   }
 }
 
+// Create the EKS cluster using the terraform-aws-modules/eks module
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.5.1"
@@ -50,6 +55,7 @@ module "eks" {
     ami_type = "AL2_x86_64"
   }
 
+// Configuration for managed node groups
   eks_managed_node_groups = {
     one = {
       name = "node-group-1"
@@ -73,6 +79,7 @@ module "eks" {
   }
 }
 
+// Install the NGINX ingress controller using the terraform-iaac/nginx-controller/helm module
 module "nginx-controller" {
   source  = "terraform-iaac/nginx-controller/helm"
 
